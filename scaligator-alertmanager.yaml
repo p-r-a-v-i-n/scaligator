@@ -1,0 +1,12 @@
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: scaligator-alerts
+  namespace: monitoring
+spec:
+  route:
+    receiver: scaligator
+  receivers:
+    - name: scaligator
+      webhookConfigs:
+        - url: "http://scaligator.default.svc.cluster.local:8080/alerts"

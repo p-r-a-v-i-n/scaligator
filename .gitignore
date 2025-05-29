@@ -1,0 +1,33 @@
+# Ignore Rust build outputs and artifacts
+/target/
+/**/target/
+
+# Ignore Cargo.lock if you're building a library (optional)
+/Cargo.lock
+
+# Ignore environment variables file (optional, but good for secrets)
+.env
+.env.*
+
+# Ignore IDE/editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.DS_Store
+
+# Ignore logs
+*.log
+
+# Ignore generated files by kube
+.kube/
+
+# Ignore local config files
+Config.toml
+
+# Ignore docker image build context artifacts
+Dockerfile
+.dockerignore
+
+# Ignore backup files
+*~

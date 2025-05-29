@@ -1,0 +1,19 @@
+[package]
+name = "scaligator"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+kube = "0.91"
+kube-runtime = "0.91"
+futures-util = "0.3"
+tracing = "0.1"
+anyhow = "1.0"
+tokio = { version = "1", features = ["full"] }
+k8s-openapi = { version = "0.22", features = ["v1_28"] }
+serde = { version = "1.0", features = ["derive"] }
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+config = "0.15.11"
+dotenvy = "0.15.7"
+reqwest = { version = "0.11", features = ["json", "rustls-tls"] }
+urlencoding = "2.1.3"

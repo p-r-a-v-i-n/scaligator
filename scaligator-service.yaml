@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: scaligator
+  namespace: default
+spec:
+  selector:
+    app: scaligator
+  ports:
+    - port: 8080
+      targetPort: 8080
