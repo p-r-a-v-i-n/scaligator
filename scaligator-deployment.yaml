@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scaligator
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: scaligator
+  template:
+    metadata:
+      labels:
+        app: scaligator
+    spec:
+      serviceAccountName: scaligator-sa
+      containers:
+        - name: scaligator
+          image: scaligator:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
