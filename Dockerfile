@@ -3,6 +3,12 @@ FROM rust:slim-bookworm AS builder
 ARG APP_NAME=scaligator
 WORKDIR /app
 
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    pkg-config \
+    libssl-dev && \
+    rm -rf /var/lib/apt/lists/*
+
 # This can help with some git-based dependencies in CI/CD environments.
 ENV CARGO_NET_GIT_FETCH_WITH_CLI=true
 
