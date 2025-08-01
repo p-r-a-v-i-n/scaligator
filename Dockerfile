@@ -1,4 +1,4 @@
-FROM rust:1.79-slim-bookworm AS builder
+FROM rust:slim-bookworm AS builder
 
 ARG APP_NAME=scaligator
 WORKDIR /app
@@ -37,6 +37,8 @@ RUN cargo build --release --locked
 
 
 FROM debian:bookworm-slim AS final
+
+ARG APP_NAME=scaligator
 
 # Create a dedicated, non-root user for running the application.
 RUN useradd --create-home --shell /bin/bash appuser
