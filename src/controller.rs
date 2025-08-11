@@ -1,17 +1,20 @@
-use kube::{Client, Api, ResourceExt};
-use kube_runtime::watcher::{watcher, Config as WatcherConfig, Event};
-use k8s_openapi::api::apps::v1::Deployment;
-use tracing::info;
 use futures_util::{pin_mut, stream::TryStreamExt};
+use k8s_openapi::api::apps::v1::Deployment;
+use kube::{Api, Client, ResourceExt};
+use kube_runtime::watcher::{Config as WatcherConfig, Event, watcher};
 use std::collections::HashMap;
+use tracing::info;
 
 use crate::config::AppConfig;
 use crate::metrics::fetch_cpu_usage;
 use crate::scaler::scale_deployment_if_needed;
 
-
 fn extract_deployment_name(pod_name: &str) -> String {
-    pod_name.rsplitn(3, '-').last().unwrap_or(pod_name).to_string()
+    pod_name
+        .rsplitn(3, '-')
+        .last()
+        .unwrap_or(pod_name)
+        .to_string()
 }
 
 pub async fn run_controller(client: Client, config: AppConfig) -> anyhow::Result<()> {
@@ -28,7 +31,6 @@ pub async fn run_controller(client: Client, config: AppConfig) -> anyhow::Result
                 let ns = deploy.namespace().unwrap_or_else(|| "default".into());
                 info!("🆕 Applied: {deploy_name} in ns {ns}");
 
-                
                 let usage_map: HashMap<String, f64> =
                     fetch_cpu_usage(&config.prometheus_url, &ns).await?;
 
@@ -42,7 +44,8 @@ pub async fn run_controller(client: Client, config: AppConfig) -> anyhow::Result
                             cpu,
                             config.scale_up_cpu_threshold,
                             config.scale_down_cpu_threshold,
-                        ).await?;
+                        )
+                        .await?;
                     }
                 }
             }
