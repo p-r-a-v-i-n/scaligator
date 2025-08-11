@@ -13,7 +13,6 @@ pub struct AppConfig {
     pub enable_dev_after: Option<String>,
 }
 
-
 // impl AppConfig {
 //     pub fn from_env() -> Result<Self, config::ConfigError> {
 //         let builder = Config::builder()

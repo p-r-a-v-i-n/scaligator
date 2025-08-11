@@ -1,8 +1,8 @@
-use serde::Deserialize;
 use anyhow::Result;
 use reqwest::Client;
-use tracing::info;
+use serde::Deserialize;
 use std::collections::HashMap;
+use tracing::info;
 
 #[derive(Debug, Deserialize)]
 struct PrometheusResponse {
@@ -37,7 +37,12 @@ pub async fn fetch_cpu_usage(
     );
 
     let client = Client::new();
-    let res = client.get(&url).send().await?.json::<PrometheusResponse>().await?;
+    let res = client
+        .get(&url)
+        .send()
+        .await?
+        .json::<PrometheusResponse>()
+        .await?;
 
     let mut usage = HashMap::new();
 

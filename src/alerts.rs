@@ -1,7 +1,6 @@
-use actix_web::{post, web, HttpResponse, Responder};
+use actix_web::{HttpResponse, Responder, post, web};
 use serde::Deserialize;
 use tracing::info;
-
 
 #[derive(Debug, Deserialize)]
 struct AlertManagerWebhook {
@@ -20,7 +19,11 @@ struct Alert {
 async fn handle_alerts(payload: web::Json<AlertManagerWebhook>) -> impl Responder {
     for alert in &payload.alerts {
         if alert.labels.get("alertname") == Some(&"HighCPUUsage".to_string()) {
-            let ns = alert.labels.get("namespace").cloned().unwrap_or_else(|| "default".to_string());
+            let ns = alert
+                .labels
+                .get("namespace")
+                .cloned()
+                .unwrap_or_else(|| "default".to_string());
             let pod = alert.labels.get("pod").cloned().unwrap_or_default();
             let cpu_str = alert.annotations.get("cpu").cloned().unwrap_or_default();
             info!("🚨 Alert: pod={}, ns={}, cpu={}", pod, ns, cpu_str);
