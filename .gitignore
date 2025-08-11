@@ -2,9 +2,6 @@
 /target/
 /**/target/
 
-# Ignore Cargo.lock if you're building a library (optional)
-/Cargo.lock
-
 # Ignore environment variables file (optional, but good for secrets)
 .env
 .env.*
