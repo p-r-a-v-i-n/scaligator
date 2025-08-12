@@ -1,4 +1,5 @@
-use prometheus::{IntCounter, Opts, Registry};
+use anyhow::Result;
+use prometheus::{proto::MetricFamily, IntCounter, Opts, Registry, TextEncoder};
 
 pub struct Metrics {
     pub registry: Registry,
@@ -44,5 +45,14 @@ impl Metrics {
             scale_down_events_total,
             http_requests_total
         }
+    }
+
+    pub fn render(&self) -> Result<String> {
+        let metric_family: Vec<MetricFamily> = self.registry.gather();
+
+        let encoder = TextEncoder::new();
+        let metric_buf =encoder.encode_to_string(&metric_family)?;
+
+        Ok(metric_buf)
     }
 }
