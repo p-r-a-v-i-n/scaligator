@@ -3,6 +3,7 @@ mod config;
 mod controller;
 mod metrics;
 mod scaler;
+mod observability;
 
 use actix_web::{App, HttpResponse, HttpServer, Responder, get};
 use anyhow::Context;
