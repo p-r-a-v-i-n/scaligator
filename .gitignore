@@ -30,4 +30,4 @@ Dockerfile
 *~
 
 # Ignore prometheus data store
-data
+data/

@@ -1,7 +1,7 @@
-use std::sync::Arc;
 use anyhow::Result;
 use k8s_openapi::api::apps::v1::Deployment;
 use kube::{Api, Client};
+use std::sync::Arc;
 use tracing::info;
 
 use crate::observability::Metrics;
@@ -13,7 +13,7 @@ pub async fn scale_deployment_if_needed(
     current_cpu: f64,
     scale_up_threshold: f64,
     scale_down_threshold: f64,
-    metric: Arc<Metrics>
+    metric: Arc<Metrics>,
 ) -> Result<()> {
     let deployments: Api<Deployment> = Api::namespaced(client.clone(), namespace);
 

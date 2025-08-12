@@ -19,7 +19,11 @@ fn extract_deployment_name(pod_name: &str) -> String {
         .to_string()
 }
 
-pub async fn run_controller(client: Client, config: AppConfig, metric: Arc<Metrics>) -> anyhow::Result<()> {
+pub async fn run_controller(
+    client: Client,
+    config: AppConfig,
+    metric: Arc<Metrics>,
+) -> anyhow::Result<()> {
     info!("👀 Watching deployments in {:?}", config.watch_namespaces);
 
     let deployments: Api<Deployment> = Api::all(client.clone());
@@ -46,7 +50,7 @@ pub async fn run_controller(client: Client, config: AppConfig, metric: Arc<Metri
                             cpu,
                             config.scale_up_cpu_threshold,
                             config.scale_down_cpu_threshold,
-                            metric.clone()
+                            metric.clone(),
                         )
                         .await?;
                     }
