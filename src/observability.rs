@@ -1,4 +1,3 @@
-use anyhow::Result;
 use prometheus::{proto::MetricFamily, IntCounter, Opts, Registry, TextEncoder};
 
 pub struct Metrics {
@@ -9,7 +8,7 @@ pub struct Metrics {
 }
 
 impl Metrics {
-    fn new() -> Metrics {
+    pub fn new() -> Metrics {
         let registry = Registry::new();
 
         let scale_up_events_total_opts = Opts::new(
@@ -47,12 +46,11 @@ impl Metrics {
         }
     }
 
-    pub fn render(&self) -> Result<String> {
+    pub fn render(&self) -> String {
         let metric_family: Vec<MetricFamily> = self.registry.gather();
 
         let encoder = TextEncoder::new();
-        let metric_buf =encoder.encode_to_string(&metric_family)?;
-
-        Ok(metric_buf)
+        encoder.encode_to_string(&metric_family).expect("Isnt able to encode Metrics to string")
+        
     }
 }

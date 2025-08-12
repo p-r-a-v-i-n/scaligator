@@ -5,7 +5,9 @@ mod metrics;
 mod scaler;
 mod observability;
 
-use actix_web::{App, HttpResponse, HttpServer, Responder, get};
+use std::sync::Arc;
+
+use actix_web::{get, web::{self, Data}, App, HttpResponse, HttpServer, Responder};
 use anyhow::Context;
 use config::AppConfig;
 use controller::run_controller;
@@ -13,6 +15,8 @@ use kube::{Client, Config as KubeConfig};
 use tokio::signal;
 use tracing::{error, info};
 use tracing_subscriber::{EnvFilter, fmt};
+
+use crate::observability::Metrics;
 
 #[get("/health")]
 async fn health() -> impl Responder {
@@ -22,6 +26,13 @@ async fn health() -> impl Responder {
 #[get("/ready")]
 async fn ready() -> impl Responder {
     HttpResponse::Ok().body("READY")
+}
+
+#[get("/metrics")]
+async fn metrics_handler(metrics: web::Data<Arc<Metrics>>) -> impl Responder {
+    metrics.http_requests_total.inc();
+
+    metrics.render()
 }
 
 fn init_logger() {
@@ -66,12 +77,17 @@ async fn run() -> anyhow::Result<()> {
     let port = std::env::var("PORT").unwrap_or_else(|_| "8080".to_string());
     let bind_addr = format!("0.0.0.0:{port}");
 
+    let observe_metrics = Arc::new(Metrics::new());
+    let observe_metrics_app_data = Data::new(observe_metrics);
+
     info!("🌐 Starting HTTP server on {}", bind_addr);
-    let server = HttpServer::new(|| {
+    let server = HttpServer::new(move || {
         App::new()
             .service(health)
             .service(ready)
             .service(alerts::handle_alerts)
+            .app_data(observe_metrics_app_data.clone())
+            .service(metrics_handler)
     })
     .bind(&bind_addr)?
     .run();
