@@ -6,7 +6,6 @@ mod scaler;
 mod observability;
 
 use std::sync::Arc;
-
 use actix_web::{get, web::{self, Data}, App, HttpResponse, HttpServer, Responder};
 use anyhow::Context;
 use config::AppConfig;
@@ -19,12 +18,16 @@ use tracing_subscriber::{EnvFilter, fmt};
 use crate::observability::Metrics;
 
 #[get("/health")]
-async fn health() -> impl Responder {
+async fn health(metrics: web::Data<Arc<Metrics>>) -> impl Responder {
+    metrics.http_requests_total.inc();
+
     HttpResponse::Ok().body("OK")
 }
 
 #[get("/ready")]
-async fn ready() -> impl Responder {
+async fn ready(metrics: web::Data<Arc<Metrics>>) -> impl Responder {
+    metrics.http_requests_total.inc();
+
     HttpResponse::Ok().body("READY")
 }
 
@@ -78,7 +81,7 @@ async fn run() -> anyhow::Result<()> {
     let bind_addr = format!("0.0.0.0:{port}");
 
     let observe_metrics = Arc::new(Metrics::new());
-    let observe_metrics_app_data = Data::new(observe_metrics);
+    let observe_metrics_app_data = Data::new(observe_metrics.clone());
 
     info!("🌐 Starting HTTP server on {}", bind_addr);
     let server = HttpServer::new(move || {
@@ -96,7 +99,7 @@ async fn run() -> anyhow::Result<()> {
         res = server => {
             res.context("HTTP server crashed")?;
         }
-        res = run_controller(kube_client, app_config) => {
+        res = run_controller(kube_client, app_config, observe_metrics) => {
             res.context("Controller crashed")?;
         }
         _ = signal::ctrl_c() => {

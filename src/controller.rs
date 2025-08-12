@@ -3,10 +3,12 @@ use k8s_openapi::api::apps::v1::Deployment;
 use kube::{Api, Client, ResourceExt};
 use kube_runtime::watcher::{Config as WatcherConfig, Event, watcher};
 use std::collections::HashMap;
+use std::sync::Arc;
 use tracing::info;
 
 use crate::config::AppConfig;
 use crate::metrics::fetch_cpu_usage;
+use crate::observability::Metrics;
 use crate::scaler::scale_deployment_if_needed;
 
 fn extract_deployment_name(pod_name: &str) -> String {
@@ -17,7 +19,7 @@ fn extract_deployment_name(pod_name: &str) -> String {
         .to_string()
 }
 
-pub async fn run_controller(client: Client, config: AppConfig) -> anyhow::Result<()> {
+pub async fn run_controller(client: Client, config: AppConfig, metric: Arc<Metrics>) -> anyhow::Result<()> {
     info!("👀 Watching deployments in {:?}", config.watch_namespaces);
 
     let deployments: Api<Deployment> = Api::all(client.clone());
@@ -44,6 +46,7 @@ pub async fn run_controller(client: Client, config: AppConfig) -> anyhow::Result
                             cpu,
                             config.scale_up_cpu_threshold,
                             config.scale_down_cpu_threshold,
+                            metric.clone()
                         )
                         .await?;
                     }

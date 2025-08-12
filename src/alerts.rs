@@ -1,6 +1,8 @@
+use std::sync::Arc;
 use actix_web::{HttpResponse, Responder, post, web};
 use serde::Deserialize;
 use tracing::info;
+use crate::observability::Metrics;
 
 #[derive(Debug, Deserialize)]
 struct AlertManagerWebhook {
@@ -16,7 +18,9 @@ struct Alert {
 }
 
 #[post("/alerts")]
-async fn handle_alerts(payload: web::Json<AlertManagerWebhook>) -> impl Responder {
+async fn handle_alerts(payload: web::Json<AlertManagerWebhook>, metrics: web::Data<Arc<Metrics>>) -> impl Responder {
+    metrics.http_requests_total.inc();
+
     if let Some(global_status) = &payload.status {
         info!("📢 Global alert status: {}", global_status);
     }
