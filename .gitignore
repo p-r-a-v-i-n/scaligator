@@ -28,3 +28,6 @@ Dockerfile
 
 # Ignore backup files
 *~
+
+# Ignore prometheus data store
+data/
