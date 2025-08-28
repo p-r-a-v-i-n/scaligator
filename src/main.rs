@@ -71,7 +71,11 @@ async fn run() -> anyhow::Result<()> {
 
     info!("🔧 Loading application config...");
     let app_config = AppConfig::from_env().context("Failed to load config")?;
-    let namespaces: Vec<String> = app_config.watch_namespaces.split(",").map(String::from).collect();
+    let namespaces: Vec<String> = app_config
+        .watch_namespaces
+        .split(",")
+        .map(String::from)
+        .collect();
 
     info!("✅ Config loaded: {:?}", app_config);
 
