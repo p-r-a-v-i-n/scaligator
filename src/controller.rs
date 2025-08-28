@@ -1,7 +1,5 @@
 use k8s_openapi::api::apps::v1::Deployment;
 use kube::{Api, Client, ResourceExt};
-use kube_runtime::watcher::{Config as WatcherConfig, Event, watcher};
-use std::collections::HashMap;
 use std::sync::Arc;
 use std::time::Duration;
 use tokio::time::sleep;
