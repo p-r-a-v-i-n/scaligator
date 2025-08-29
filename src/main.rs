@@ -71,6 +71,12 @@ async fn run() -> anyhow::Result<()> {
 
     info!("🔧 Loading application config...");
     let app_config = AppConfig::from_env().context("Failed to load config")?;
+    let namespaces: Vec<String> = app_config
+        .watch_namespaces
+        .split(",")
+        .map(String::from)
+        .collect();
+
     info!("✅ Config loaded: {:?}", app_config);
 
     info!("🔧 Inferring Kubernetes config...");
@@ -102,7 +108,7 @@ async fn run() -> anyhow::Result<()> {
         res = server => {
             res.context("HTTP server crashed")?;
         }
-        res = run_controller(kube_client, app_config, observe_metrics) => {
+        res = run_controller(kube_client, app_config, observe_metrics,  namespaces) => {
             res.context("Controller crashed")?;
         }
         _ = signal::ctrl_c() => {
