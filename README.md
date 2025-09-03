@@ -176,6 +176,14 @@ It dynamically scales workloads based on custom Prometheus metrics, time-based r
    - Connection refused to Prometheus → update prometheus_url in config to point to your running Prometheus service
    - No scaling happening → check kubectl get events for denied patch operations
 
+### 🤔 Scaligator vs KEDA
+   - 🔍 Rust-based: tiny binary, low overhead, very fast
+   - ⚡ Prometheus-native: simple queries + alert webhook, no complex CRDs
+   - ⏰ Time-based scaling: scale down dev at night, scale up in morning (KEDA doesn’t support this out-of-the-box)
+   - 🚨 Alert-based webhook scaling: direct integration with Alertmanager
+   - 🪶 Config-driven & minimal: easier to reason about vs KEDA’s multiple CRDs
+   - 🚀 Potential future: vertical scaling (planned for Kubernetes ≥1.33, KEDA doesn’t cover this yet)
+
 ### 💡 Why contribute?
 
    - 🦀 Written in Rust – great for learning systems programming in cloud-native environments
