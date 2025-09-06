@@ -4,21 +4,23 @@ mod controller;
 mod metrics;
 mod observability;
 mod scaler;
+mod cli;
 
 use actix_web::{
     App, HttpResponse, HttpServer, Responder, get,
     web::{self, Data},
 };
 use anyhow::Context;
+use clap::Parser;
 use config::AppConfig;
 use controller::run_controller;
 use kube::{Client, Config as KubeConfig};
-use std::sync::Arc;
+use std::{path::PathBuf, sync::Arc};
 use tokio::signal;
 use tracing::{error, info};
 use tracing_subscriber::{EnvFilter, fmt};
 
-use crate::observability::Metrics;
+use crate::{cli::Args, observability::Metrics};
 
 #[get("/health")]
 async fn health(metrics: web::Data<Arc<Metrics>>) -> impl Responder {
@@ -69,8 +71,10 @@ async fn main() {
 async fn run() -> anyhow::Result<()> {
     // dotenvy::dotenv().context("Something went wrong during loading dotenv")?;
 
+    let args = Args::parse();
+
     info!("🔧 Loading application config...");
-    let app_config = AppConfig::from_env().context("Failed to load config")?;
+    let app_config = AppConfig::configure(args.config.map(PathBuf::from)).context("Failed to load config")?;
     let namespaces: Vec<String> = app_config
         .watch_namespaces
         .split(",")
