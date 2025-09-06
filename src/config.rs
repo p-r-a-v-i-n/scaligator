@@ -20,31 +20,35 @@ pub struct AppConfig {
 
 impl AppConfig {
     pub fn configure(path: Option<PathBuf>) -> Result<Self, config::ConfigError> {
-
         // Subtitute it if path isnt provided
         let config_path: PathBuf = match path {
-            Some(s) =>  {
+            Some(s) => {
                 if !s.exists() {
-                    warn!("❔ Config file from argument doesn\'t exist, Using default config path, cli argument: {:#?}",s);
+                    warn!(
+                        "❔ Config file from argument doesn\'t exist, Using default config path, cli argument: {:#?}",
+                        s
+                    );
                     let t = PathBuf::from("./Config");
                     if !t.exists() {
-                        warn!("❔ Default config file doesn\'t exist, using Environment and default config");
+                        warn!(
+                            "❔ Default config file doesn\'t exist, using Environment and default config"
+                        );
                     }
                     t
-                }
-                else {
+                } else {
                     s
                 }
-            },
+            }
             None => {
                 let t = PathBuf::from("./Config");
                 if !t.exists() {
-                    warn!("❔ Default config file doesn\'t exist, using Environment and default config");
+                    warn!(
+                        "❔ Default config file doesn\'t exist, using Environment and default config"
+                    );
                 }
                 t
             }
         };
-
 
         let builder = Config::builder()
             .set_default("prometheus_url", "http://localhost:9090".to_string())?

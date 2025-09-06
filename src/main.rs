@@ -1,10 +1,10 @@
 mod alerts;
+mod cli;
 mod config;
 mod controller;
 mod metrics;
 mod observability;
 mod scaler;
-mod cli;
 
 use actix_web::{
     App, HttpResponse, HttpServer, Responder, get,
@@ -74,7 +74,8 @@ async fn run() -> anyhow::Result<()> {
     let args = Args::parse();
 
     info!("🔧 Loading application config...");
-    let app_config = AppConfig::configure(args.config.map(PathBuf::from)).context("Failed to load config")?;
+    let app_config =
+        AppConfig::configure(args.config.map(PathBuf::from)).context("Failed to load config")?;
     let namespaces: Vec<String> = app_config
         .watch_namespaces
         .split(",")
