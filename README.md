@@ -50,6 +50,86 @@ It dynamically scales workloads based on custom Prometheus metrics, time-based r
    ```
    (Optionally integrate with Prometheus & Alertmanager using scaligator-rules.yaml and scaligator-alertmanager.yaml)
 
+### ⚙️ Configuration
+   - Scaligator supports:
+      - Environment variables (override config file)
+      - Config file (config.toml)
+      - Kubernetes ConfigMap
+   - Example config:
+   ```bash
+   prometheus_url = "http://prometheus-operated.monitoring:9090"
+   watch_namespaces = ["default", "scaling", "dev"]
+   scale_up_cpu_threshold = 0.7
+   scale_down_cpu_threshold = 0.2
+   disable_dev_after = "20:00"
+   enable_dev_after = "08:00"
+
+   ```
+   - Load via ConfigMap:
+   ```bash
+   kubectl create configmap scaligator-config \
+   --from-file=config.toml=./config/config.toml
+   ```
+
+### 🚀 Usage Examples
+   Here are a few examples of how to run Scaligator with different configurations.
+
+   1. Using a Configuration File
+   You can run Scaligator with a custom configuration file by using the --config (or -c) flag.
+
+   - Create a Config.toml file:
+
+   ```toml
+   prometheus_url = "[http://prometheus-operated.monitoring:9090](http://prometheus-operated.monitoring:9090)"
+   watch_namespaces = "default,scaling,dev"
+   scale_up_cpu_threshold = 0.75
+   scale_down_cpu_threshold = 0.25
+   reconcile_interval = 60
+   ```
+
+   - Run Scaligator with the config file:
+
+   ```bash
+   cargo run -- -c /path/to/your/Config.toml
+   ```
+
+   2. Using Environment Variables
+   Scaligator can also be configured using environment variables with the SCALIGATOR_ prefix. This is especially useful in CI/CD pipelines or Kubernetes deployments.
+
+   - Set the environment variables:
+
+   ```bash
+   export SCALIGATOR_PROMETHEUS_URL="[http://prometheus.monitoring.svc.cluster.local:9090](http://prometheus.monitoring.svc.cluster.local:9090)"
+   export SCALIGATOR_WATCH_NAMESPACES="production,staging"
+   export SCALIGATOR_SCALE_UP_CPU_THRESHOLD="0.8"
+   export SCALIGATOR_SCALE_DOWN_CPU_THRESHOLD="0.3"
+   ```
+
+   - Run Scaligator:
+
+   ```bash
+   cargo run
+   ```
+
+   3. Running with Docker
+   You can run Scaligator using the pre-built Docker image. This is the recommended way to run Scaligator in a production environment.
+
+   - Build the Docker image:
+
+   ```bash
+   docker build -t scaligator:latest .
+   ```
+
+   - Run the Docker container with environment variables:
+
+
+   ```bash
+   docker run \
+     -e SCALIGATOR_PROMETHEUS_URL="[http://prometheus.monitoring.svc.cluster.local:9090](http://prometheus.monitoring.svc.cluster.local:9090)" \
+     -e SCALIGATOR_WATCH_NAMESPACES="default" \
+     scaligator:latest
+   ```
+
 ### 📊 Prometheus & Alertmanager Integration
    #### 1. Prometheus Scraping
    - Update your prometheus.yml:
@@ -104,27 +184,6 @@ It dynamically scales workloads based on custom Prometheus metrics, time-based r
 
    ```bash
    kubectl apply -f scaligator-alertmanager.yaml
-   ```
-
-### ⚙️ Configuration
-   - Scaligator supports:
-      - Environment variables (override config file)
-      - Config file (config.toml)
-      - Kubernetes ConfigMap
-   - Example config:
-   ```bash
-   prometheus_url = "http://prometheus-operated.monitoring:9090"
-   watch_namespaces = ["default", "scaling", "dev"]
-   scale_up_cpu_threshold = 0.7
-   scale_down_cpu_threshold = 0.2
-   disable_dev_after = "20:00"
-   enable_dev_after = "08:00"
-
-   ```
-   - Load via ConfigMap:
-   ```bash
-   kubectl create configmap scaligator-config \
-   --from-file=config.toml=./config/config.toml
    ```
 
 ### 🔄 How Scaling Works
