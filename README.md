@@ -72,63 +72,63 @@ It dynamically scales workloads based on custom Prometheus metrics, time-based r
    ```
 
 ### 🚀 Usage Examples
-    Here are a few examples of how to run Scaligator with different configurations.
+   Here are a few examples of how to run Scaligator with different configurations.
 
-    1. Using a Configuration File
-    You can run Scaligator with a custom configuration file by using the --config (or -c) flag.
+   1. Using a Configuration File
+   You can run Scaligator with a custom configuration file by using the --config (or -c) flag.
 
-    - Create a Config.toml file:
+   - Create a Config.toml file:
 
-    ```toml
-    prometheus_url = "[http://prometheus-operated.monitoring:9090](http://prometheus-operated.monitoring:9090)"
-    watch_namespaces = "default,scaling,dev"
-    scale_up_cpu_threshold = 0.75
-    scale_down_cpu_threshold = 0.25
-    reconcile_interval = 60
-    ```
+   ```toml
+   prometheus_url = "[http://prometheus-operated.monitoring:9090](http://prometheus-operated.monitoring:9090)"
+   watch_namespaces = "default,scaling,dev"
+   scale_up_cpu_threshold = 0.75
+   scale_down_cpu_threshold = 0.25
+   reconcile_interval = 60
+   ```
 
-    - Run Scaligator with the config file:
+   - Run Scaligator with the config file:
 
-    ```bash
-    cargo run -- -c /path/to/your/Config.toml
-    ```
+   ```bash
+   cargo run -- -c /path/to/your/Config.toml
+   ```
 
-    2. Using Environment Variables
-    Scaligator can also be configured using environment variables with the SCALIGATOR_ prefix. This is especially useful in CI/CD pipelines or Kubernetes deployments.
+   2. Using Environment Variables
+   Scaligator can also be configured using environment variables with the SCALIGATOR_ prefix. This is especially useful in CI/CD pipelines or Kubernetes deployments.
 
-    - Set the environment variables:
+   - Set the environment variables:
 
-    ```bash
-    export SCALIGATOR_PROMETHEUS_URL="[http://prometheus.monitoring.svc.cluster.local:9090](http://prometheus.monitoring.svc.cluster.local:9090)"
-    export SCALIGATOR_WATCH_NAMESPACES="production,staging"
-    export SCALIGATOR_SCALE_UP_CPU_THRESHOLD="0.8"
-    export SCALIGATOR_SCALE_DOWN_CPU_THRESHOLD="0.3"
-    ```
+   ```bash
+   export SCALIGATOR_PROMETHEUS_URL="[http://prometheus.monitoring.svc.cluster.local:9090](http://prometheus.monitoring.svc.cluster.local:9090)"
+   export SCALIGATOR_WATCH_NAMESPACES="production,staging"
+   export SCALIGATOR_SCALE_UP_CPU_THRESHOLD="0.8"
+   export SCALIGATOR_SCALE_DOWN_CPU_THRESHOLD="0.3"
+   ```
 
-    - Run Scaligator:
+   - Run Scaligator:
 
-    ```bash
-    cargo run
-    ```
+   ```bash
+   cargo run
+   ```
 
-    3. Running with Docker
-    You can run Scaligator using the pre-built Docker image. This is the recommended way to run Scaligator in a production environment.
+   3. Running with Docker
+   You can run Scaligator using the pre-built Docker image. This is the recommended way to run Scaligator in a production environment.
 
-    - Build the Docker image:
+   - Build the Docker image:
 
-    ```bash
-    docker build -t scaligator:latest .
-    ```
+   ```bash
+   docker build -t scaligator:latest .
+   ```
 
-    - Run the Docker container with environment variables:
+   - Run the Docker container with environment variables:
 
 
-    ```bash
-    docker run \
-      -e SCALIGATOR_PROMETHEUS_URL="[http://prometheus.monitoring.svc.cluster.local:9090](http://prometheus.monitoring.svc.cluster.local:9090)" \
-      -e SCALIGATOR_WATCH_NAMESPACES="default" \
-      scaligator:latest
-    ```
+   ```bash
+   docker run \
+     -e SCALIGATOR_PROMETHEUS_URL="[http://prometheus.monitoring.svc.cluster.local:9090](http://prometheus.monitoring.svc.cluster.local:9090)" \
+     -e SCALIGATOR_WATCH_NAMESPACES="default" \
+     scaligator:latest
+   ```
 
 ### 📊 Prometheus & Alertmanager Integration
    #### 1. Prometheus Scraping
