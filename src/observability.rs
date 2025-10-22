@@ -60,3 +60,9 @@ impl Metrics {
             .expect("Isnt able to encode Metrics to string")
     }
 }
+
+impl Default for Metrics {
+    fn default() -> Self {
+        Self::new()
+    }
+}
